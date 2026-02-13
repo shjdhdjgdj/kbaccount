@@ -18,7 +18,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import Freelance.com.projectSetup.ExcelUtility;
-import Freelance.com.projectSetup.VARIABLES;
+import config.VARIABLES;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class MainRunnerClass {
