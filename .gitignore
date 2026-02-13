@@ -1,0 +1,25 @@
+# local configs
+VARIABLES.java
+config.properties
+
+# build
+/target/
+/bin/
+
+# reports
+/test-output/
+/surefire-reports/
+
+# runtime data
+/logs/
+/downloads/
+/screenshots/
+
+# eclipse
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
