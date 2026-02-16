@@ -17,8 +17,9 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.JavascriptExecutor;
 
-import config.VARIABLES;
+import Freelance.com.projectSetup.VARIABLES;
 
 public class PageBean {
 
@@ -137,6 +138,9 @@ public class PageBean {
 	@FindBy(id = "insure_f_category")
 	private WebElement farmerCategoryDropDown;
 
+	@FindBy(id = "insure_nominee_name")
+	private WebElement nomineeName;
+
 	@FindBy(id = "insure_id_proof")
 	private WebElement voterIDUpload;
 
@@ -243,14 +247,14 @@ public class PageBean {
 		passWord.sendKeys(s2);
 
 		Select dropdown1 = new Select(seasonDropdown);
-		dropdown1.selectByIndex(index1);
+		dropdown1.selectByIndex(index2);
 
 		wait.until(driver1 -> {
 			Select dropDown2 = new Select(sessionDropdown);
 			return dropDown2.getOptions().size() > 1;
 		});
 		Select dropdown2 = new Select(sessionDropdown);
-		dropdown2.selectByIndex(index2);
+		dropdown2.selectByIndex(index1);
 
 		Thread.sleep(2000);
 		generateOtp.click();
@@ -329,6 +333,13 @@ public class PageBean {
 		Select dropDown5 = new Select(farmerCategoryDropDown);
 		dropDown5.selectByValue(farmerCategory);
 
+		try {
+		    Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		    e.printStackTrace();
+		}
+		nomineeName.clear();
+
 		/* File Upload Logic (unchanged) */
 		try {
 			File file1 = new File(VARIABLES.VOTER_FILE_PATH + "\\" + epicIDImage + ".jpg");
@@ -382,6 +393,7 @@ public class PageBean {
 			Select dropDown4 = new Select(farmersResidentialAddressvillageDropDown);
 			return dropDown4.getOptions().size() > 1;
 		});
+		Thread.sleep(2000);
 		new Select(farmersResidentialAddressvillageDropDown).selectByIndex(1);
 
 		pinCode.sendKeys(pin);
@@ -484,36 +496,57 @@ public class PageBean {
 
 	/*----------------------------------------- Bank details entry ------------------------------------------------*/
 	public void bankDetailsEntry(String name, String accountNumber, String accountType, String ifscCode)
-			throws InterruptedException {
+	        throws InterruptedException {
 
-		bankDetailsAccountHolderName.sendKeys(name);
+	    // 1. Account Holder Name
+	    // Check if enabled AND not read-only
+	    if (bankDetailsAccountHolderName.isEnabled() && bankDetailsAccountHolderName.getAttribute("readonly") == null) {
+	        bankDetailsAccountHolderName.sendKeys(name);
+	    }
 
-		bankDetailsAccountNumber.clear();
-		bankDetailsAccountNumber.sendKeys(accountNumber);
+	    // 2. Account Number (The one causing your error)
+	    if (bankDetailsAccountNumber.isEnabled() && bankDetailsAccountNumber.getAttribute("readonly") == null) {
+	        bankDetailsAccountNumber.clear();
+	        bankDetailsAccountNumber.sendKeys(accountNumber);
+	    }
 
-		new Select(accountTypeDropDown).selectByValue(accountType);
+	    // 3. Account Type
+	    // Select dropdowns usually just need isEnabled()
+	    if (accountTypeDropDown.isEnabled()) {
+	        new Select(accountTypeDropDown).selectByValue(accountType);
+	    }
 
-		ifsCode.clear();
-		ifsCode.sendKeys(ifscCode);
-		
-		bankName.click();
-		Thread.sleep(500);		
-		
-		try {
-			File f1 = new File(VARIABLES.BANK_FILE_PATH + "\\" + accountNumber + ".jpg");
-			File f2 = new File(VARIABLES.BANK_FILE_PATH + "\\" + accountNumber + ".jpeg");
-			File f3 = new File(VARIABLES.BANK_FILE_PATH + "\\" + accountNumber + ".png");
-			File f4 = new File(VARIABLES.BANK_FILE_PATH + "\\" + accountNumber + ".pdf");
+	    // 4. IFSC Code
+	    if (ifsCode.isEnabled() && ifsCode.getAttribute("readonly") == null) {
+	        ifsCode.clear();
+	        ifsCode.sendKeys(ifscCode);
 
-			if (f1.exists()) bankDocumentProofUpload.sendKeys(f1.getAbsolutePath());
-			else if (f2.exists()) bankDocumentProofUpload.sendKeys(f2.getAbsolutePath());
-			else if (f3.exists()) bankDocumentProofUpload.sendKeys(f3.getAbsolutePath());
-			else if (f4.exists()) bankDocumentProofUpload.sendKeys(f4.getAbsolutePath());
-			else throw new FileNotFoundException("Bank document not found: " + accountNumber);
+	        // Click bank name only if interactive
+	        if (bankName.isEnabled()) {
+	            bankName.click();
+	            Thread.sleep(500);
+	        }
+	    }
 
-		} catch (Exception e) { e.printStackTrace(); }
+	    // 5. Document Upload
+	    if (bankDocumentProofUpload.isEnabled() && bankDocumentProofUpload.getAttribute("readonly") == null) {
+	        try {
+	            File f1 = new File(VARIABLES.BANK_FILE_PATH + "\\" + accountNumber + ".jpg");
+	            File f2 = new File(VARIABLES.BANK_FILE_PATH + "\\" + accountNumber + ".jpeg");
+	            File f3 = new File(VARIABLES.BANK_FILE_PATH + "\\" + accountNumber + ".png");
+	            File f4 = new File(VARIABLES.BANK_FILE_PATH + "\\" + accountNumber + ".pdf");
+
+	            if (f1.exists()) bankDocumentProofUpload.sendKeys(f1.getAbsolutePath());
+	            else if (f2.exists()) bankDocumentProofUpload.sendKeys(f2.getAbsolutePath());
+	            else if (f3.exists()) bankDocumentProofUpload.sendKeys(f3.getAbsolutePath());
+	            else if (f4.exists()) bankDocumentProofUpload.sendKeys(f4.getAbsolutePath());
+	            // Optional: Log if no file found, but don't throw exception if we want to continue
+	            
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
-
 	/*------------------------------------------------ Submit form -----------------------------------------------*/
 	public void submitForm() {
 		submitButton.click();
