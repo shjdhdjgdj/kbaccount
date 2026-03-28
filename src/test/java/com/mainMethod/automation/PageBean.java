@@ -388,7 +388,7 @@ public class PageBean {
 			Select dropDown4 = new Select(farmersResidentialAddressvillageDropDown);
 			return dropDown4.getOptions().size() > 1;
 		});
-		Thread.sleep(2000);
+		Thread.sleep(600);
 		new Select(farmersResidentialAddressvillageDropDown).selectByIndex(1);
 
 		pinCode.sendKeys(pin);
