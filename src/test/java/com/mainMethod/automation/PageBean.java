@@ -257,7 +257,7 @@ public class PageBean {
 		dropdown2.selectByIndex(index1);
 
 		generateOtp.click();
-		Thread.sleep(30000);
+		Thread.sleep(60000);
 
 		if (!checkbox.isSelected()) {
 			checkbox.click();
