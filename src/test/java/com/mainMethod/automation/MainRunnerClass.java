@@ -92,7 +92,7 @@ public class MainRunnerClass {
 						break;
 					} else {
 						driver.navigate().refresh(); // refresh the page
-						Thread.sleep(2000); // wait for 2 seconds before trying again
+						Thread.sleep(200); // wait for 2 seconds before trying again
 					}
 				} catch (NoSuchElementException e) {
 					retryCount++; // increment retry count
