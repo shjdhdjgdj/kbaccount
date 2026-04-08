@@ -395,7 +395,7 @@ public class PageBean {
 	}
 
 	/*--------------------------------------- Crop details entry ----------------------------------------*/
-	public void cropDetailsEntry(String district, String block, String crop, String gp, String mouza,
+	public void cropDetailsEntry(String district, String block, String crop, String gpInitial, String mouza,
 			String khatianNumber, String plotNumber, String areaInAcre1, String natureOfFarmer, String parchaImg)
 			throws InterruptedException {
 		
@@ -410,13 +410,17 @@ public class PageBean {
 			return dropDown.getOptions().size() > 1;
 		});
 		new Select(cropDetailsCropDropDown).selectByVisibleText(crop);
-
+				
+		if (cropDetailsGramPanchayatInitial.isEnabled()) {
+			wait.until(driver1 -> new Select(cropDetailsGramPanchayatInitial).getOptions().size() > 1);
+			new Select(cropDetailsGramPanchayatInitial).selectByVisibleText(gpInitial);
+		}
 		if (cropDetailsGramPanchayatFinal.isEnabled()) {
 			wait.until(driver1 -> {
 				Select dropDown = new Select(cropDetailsGramPanchayatFinal);
 				return dropDown.getOptions().size() > 1;
 			});
-			new Select(cropDetailsGramPanchayatFinal).selectByVisibleText(gp);
+			new Select(cropDetailsGramPanchayatFinal).selectByVisibleText(gpInitial);
 		}
 
 		wait.until(driver1 -> {
